@@ -58,6 +58,27 @@ API host stopped resolving, both caught by this script.
 
 ## Status
 
-M1 of 7. The scaffold, the four-state panel model, the resolver spine and the
-UniProt connector are in place. Remaining milestones are listed in
-PROJECT-PLAN.md §14.
+**Live at <https://chaperone-cyan.vercel.app>** — public, no login.
+
+M0–M8 are done, plus the two surfaces added after M8 (the filter catalogue and
+the structure door). M9 deployed on 2026-11-11. That means: 18 connectors, the
+resolver, the rules layer (3 presets, 22 deep links, 10 suggestion rules), the
+interface in three tabs, and all 20 §7 criteria met — 17 machine-checked by
+`npm run verify:criteria` and `npm run verify:absence`, three induced by hand.
+
+Two things are still owed, both in PROJECT-PLAN.md §15:
+
+- **§15.1 no outbound throttle and no shared cache.** Each serverless instance
+  caches separately, so the same query on two instances is two full fan-outs
+  upstream. Fine for reviewers you can name; not fine for a link forwarded
+  around a department.
+- **§15.4 the HPO logo** display obligation is unmet (the acknowledgement
+  statement and version are in place).
+
+§15.2 — whether the Vercel plan permits a public commercial deployment — needs
+the owner's eyes on the billing page, not a code change.
+
+The milestone table and the full record of what was decided and why are in
+PROJECT-PLAN.md §14 and §13. **Read it before changing anything here:** the
+conversations that built this project were deleted on 2026-11-25, so that
+document is the only remaining record of the reasoning.

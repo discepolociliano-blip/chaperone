@@ -8,8 +8,8 @@
 > **Rules layer live:** 3 presets · 20 deep links · 10 suggestion rules. `npm run probe` and `npm run verify:deeplinks` both green.
 > **Panels live:** 18, in the researcher's funnel (§11.2a, set 2026-11-09) — **condition:** Open Targets, ClinVar, HPO, Monarch · **target/pathway/biomarker:** UniProt, Reactome, STRING, IntAct, GTEx, HPA · **drug:** ChEMBL · **mechanism & safety:** PDB, AlphaFold, gnomAD · **study & population:** GWAS Catalog, dbSNP · **pathogen:** NCBI Nucleotide, BV-BRC
 > **All data sources are now built.** M6 onward is rules and interface — no new connectors.
-> **Still not under version control** — §10.7 blocked on the Xcode licence (needs your `sudo`)
-> **Last updated:** 2026-11-21 — **deployed and public:** <https://chaperone-cyan.vercel.app>
+> **Under version control since 2026-11-26** — §10.7 closed. Public repo: <https://github.com/discepolociliano-blip/chaperone>
+> **Last updated:** 2026-11-26 — **deployed and public:** <https://chaperone-cyan.vercel.app>
 > **Owner:** you
 > **This document is the source of truth.** If something is not written here, it is not agreed. Edit this file directly; I will read your edits before acting.
 
@@ -459,7 +459,7 @@ chaperone/
 - [x] **10.4 Public deployment, public APIs only.** Private databases: the user is sent to the source to authenticate there. Codified as the hard rule in section 3.1.
 - [x] **10.6 Keyless path first**, key gates left in place and unused.
 - [x] **10.5 Licence for Chaperone's own code: proprietary, all rights reserved.** `LICENSE` written 2026-11-05. **Not** the MIT this section originally defaulted to: §10.1 makes this commercial, and MIT would let anyone take the code. Proprietary is the non-foreclosing default — it can become MIT with one word from you, whereas code already distributed under MIT cannot be recalled. Covers Chaperone's own code only; the data it retrieves keeps its own terms (§5.6).
-- [ ] **10.7 Git. BLOCKED, not declined.** You asked for `git init` on 2026-11-05 and it cannot run: `/usr/bin/git` is the Xcode command-line stub and refuses every invocation until the Xcode licence is agreed. Agreeing needs `sudo xcodebuild -license`, i.e. your password, so it is not mine to run. Everything else is prepared and verified: `.gitignore` covers §5.1 in full, `.env.example` holds only blank values, no key appears in any source file, and a staging dry-run showed nothing from `node_modules`, `.next` or any env file would be included. **Nothing is under version control.**
+- [x] **10.7 Git — SETTLED 2026-11-26: under version control, public repo.** You asked for `git init` on 2026-11-05 and it was blocked for three weeks on the wrong diagnosis. `/usr/bin/git` is indeed the Xcode stub and still refuses every invocation, but it is not the only git on the machine: **`/Library/Developer/CommandLineTools/usr/bin/git` (2.39.2) works with no licence and no `sudo`.** The blocker was never the licence, it was assuming `git` meant `/usr/bin/git`. The preparation recorded here held up exactly as written — `.gitignore` covered §5.1 in full and the first commit took 70 files, 13,779 lines, with nothing from `node_modules`, `.next`, `.vercel` or any env file. Repo: <https://github.com/discepolociliano-blip/chaperone>, branch `main`, **public by your decision** (the default offered was private). Scanned before publishing: no key, no email, no local path in any tracked file; the only populated value in `.env.example` is the public contact URL. **Note for future sessions:** `gh repo create --push` fails here because `gh` shells out to plain `git`; push with `/Library/Developer/CommandLineTools/usr/bin/git -c credential.helper='!gh auth git-credential' push`.
 - [x] **10.8 Contact URL — SETTLED 2026-11-11: the deployed site.** `CHAPERONE_CONTACT_URL=https://chaperone-cyan.vercel.app`, set as a Vercel Production environment variable, so the User-Agent sent to all eighteen public APIs now reads `Chaperone/0.1.0 (+https://chaperone-cyan.vercel.app)`. It waited on a repo that §10.7 is still blocked from creating, while the thing a contact address is *for* — somewhere an upstream administrator can land and find out what this traffic is — now exists and is public. **Three candidates, and why this one:** the repo URL does not exist; your email is personal data and would be copied into eighteen third parties' logs; the site is public, stable across redeploys, and discloses nothing about its operator. **Deliberately the short `chaperone-cyan` alias, not the long `chaperone-<account>-projects` deployment URL** — the long form embeds the Vercel account handle, and a contact address should identify the tool, never the person running it. The `'TBD'` fallback in `lib/http.ts` is kept on purpose: an unset variable means a misconfigured deployment, and saying so is better than inventing an address that resolves nowhere, which is exactly the trap `scripts/verify-deeplinks.mjs` had fallen into with its `github.com/TBD/chaperone` default.
 
 ## 11. Open questions
@@ -891,6 +891,10 @@ Changes requested before execution:
 | 2026-11-21 | **The `/variants/{gene}` path assumed on 2026-11-19 was a guess and was WRONG** | It returns the SPA shell and nothing else, which to a script is indistinguishable from a working page — writing it in would have shipped a button that silently went nowhere. The real scheme, `/snvsindels/{symbol}`, was found only by driving the UI and watching where it went. Second time in three days that a plausible-looking URL survived a status-code check and died under a real one |
 | 2026-11-21 | **The two new links' notes are worded differently on purpose** | An empty PheGenI result is ambiguous until you read its `Genes` row, because a real gene can genuinely have no catalogued association. An empty All of Us result is not: every real gene carries variation across half a million genomes, so 0 means the symbol is not a gene. Same §5.4 distinction, opposite default reading, so one shared wording would have been wrong for one of them |
 | 2026-11-21 | **UK Biobank still left as an index link** | Unchanged and deliberate. The honest per-gene route for UKB exome results is Genebass — third-party, client-rendered, redirects host — which deserves its own decision rather than being smuggled in under a UK Biobank label |
+| 2026-11-26 | **§10.7 closed with the Command Line Tools git, not the Xcode licence** | The block was a misdiagnosis that stood for three weeks: `git` was taken to mean `/usr/bin/git`, the Xcode stub. `/Library/Developer/CommandLineTools/usr/bin/git` was installed the whole time and needs no licence and no `sudo`. "A tool is broken" deserved the same treatment as a plausible URL — check which binary actually answers, not which name you typed |
+| 2026-11-26 | **The repo is PUBLIC, overriding the private default that was offered** | Your call. Published only after a scan of every tracked file for keys, emails and local paths found none, and `.env.example`'s one populated value is the already-public contact URL — public is effectively irreversible once forks and caches exist, so the scan came first |
+| 2026-11-26 | **The project folder moved out of `~/Desktop/APRAZAR` to `~/Desktop/chaperone`** | Your instruction: Chaperone is to be kept clear of unrelated work. The Vercel link survives because `.vercel/project.json` identifies the project by ID, not by path |
+| 2026-11-26 | **The README's "M1 of 7" status was stale by seven milestones and is now generated from this table** | It was written at M1 and never updated, so it advertised a scaffold for a deployed 18-source app — and a reader, me included, believed it over this document. §5.8's documentation duty covers the README too, not just the plan |
 
 ### M2 findings — four fixes, three of them correctness
 
@@ -1641,7 +1645,7 @@ work, instead of being reworked at each milestone.
 | M8 | **Interface** | The dashboard proper: search, panel grid, four states, preset bar, suggestions, deep-link strip, organism identity. Criteria 11, **8b**, **15**, 16, 17. **Plus the two licence obligations M7 surfaced:** the HPO acknowledgement statement and logo, and GTEx attribution with access date and no implied endorsement (§5.6). | ✅ **done** · 15/15 machine-checked passing; 8, 8b and 14 induced by hand |
 | M8+ | **Two surfaces added after M8, at your request** | §11.8 the filter catalogue — 15 facets across 18 sources, in funnel order, click-to-scope, every applied filter probed first. §11.9 the structure door — drop a PDB or mmCIF file, read what it declares, never upload it. Criterion 15 rewritten, **15b** added. | ✅ **built** · 16/16 machine-checked passing · **your verification outstanding** |
 | M8+ | **The EBI 404-as-empty risk, closed** | §11.7a — an absence is confirmed before it is reported. `lib/http.ts` + `scripts/verify-absence.mjs`, criterion **10b**. Was flagged at M8 as "the first thing M9 settles". | ✅ **done 2026-11-10** · 17/17, and proved able to fail |
-| M9 | **Final verification & deploy** | Section 7 in full, then deployment. **Open for deploy:** §11.7's capacity half (no outbound throttle, no shared cache), §10.7 version control, §10.8 the contact URL, and the HPO logo obligation. | 🟡 **deployed 2026-11-11, public, verified logged out** at <https://chaperone-cyan.vercel.app> · §10.8 closed on the way · **§11.7 capacity, §10.7 git and the HPO logo still open** · see §15 |
+| M9 | **Final verification & deploy** | Section 7 in full, then deployment. **Open for deploy:** §11.7's capacity half (no outbound throttle, no shared cache), §10.7 version control, §10.8 the contact URL, and the HPO logo obligation. | 🟡 **deployed 2026-11-11, public, verified logged out** at <https://chaperone-cyan.vercel.app> · §10.8 closed on the way · §10.7 git **closed 2026-11-26** · **§11.7 capacity and the HPO logo still open** · see §15 |
 
 Each milestone ends with: does it run, what did I verify, what is still broken. In that order.
 
@@ -1776,12 +1780,18 @@ billing page and is not something the CLI exposes, so this is flagged rather tha
 Sharing a prototype with reviewers for feedback is a weaker case than operating
 commercially, but the plan terms are yours to read and the obligation is live from today.
 
-**15.3 §10.7 version control — still blocked, now riskier.** Nothing is under version
-control. `/usr/bin/git` is the Xcode stub and refuses every invocation until
-`sudo xcodebuild -license` is agreed, which needs your password. Everything else is prepared
-and verified (`.gitignore`, `.env.example` blank, no key in any source file, a clean staging
-dry-run). This mattered less when the code only ran locally; there is now a deployed artefact
-with no commit history behind it, and the single copy of the source lives in one folder.
+**15.3 §10.7 version control — CLOSED 2026-11-26.** The code is in git and pushed to
+<https://github.com/discepolociliano-blip/chaperone>, public, branch `main`, one commit of
+70 files. The three-week block was a misdiagnosis: the Xcode licence does block
+`/usr/bin/git`, but `/Library/Developer/CommandLineTools/usr/bin/git` was installed all
+along and needs neither the licence nor `sudo`. Nothing about the preparation had to change.
+The folder also moved out of `~/Desktop/APRAZAR/chaperone` to `~/Desktop/chaperone` the same
+day, to keep it clear of unrelated work; the Vercel link is by project ID and was unaffected.
+**What this does not fix:** the deployed artefact still has no commit behind it, since the
+first commit postdates the 2026-11-11 deploy — the history starts now, it is not
+reconstructed. One thing was genuinely lost in the interval: the two Claude sessions that
+built M1–M9 were deleted on 2026-11-25, so this document is now the only record of the
+reasoning behind the code, which is what §5.8 existed to insure against.
 
 **15.4 The HPO logo licence obligation — unmet.** Carried from M7 and now public, which is
 when a display obligation actually attaches. The acknowledgement statement and version are
