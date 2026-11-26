@@ -46,12 +46,13 @@ import { DeepLinkStrip } from '@/components/DeepLinkStrip';
 import { Attributions } from '@/components/Attributions';
 import { FilterBrowser } from '@/components/FilterBrowser';
 import { StructureDrop } from '@/components/StructureDrop';
+import { SourceCatalogue, SOURCE_COUNT } from '@/components/SourceCatalogue';
 import { useLookup } from '@/components/useLookup';
 import { FILTERS, filterById, searchFilters } from '@/lib/filters';
 import type { Preset } from '@/lib/types';
 import type { ActiveSelection } from '@/components/FilterBrowser';
 
-type Tab = 'results' | 'filters' | 'structure';
+type Tab = 'results' | 'filters' | 'structure' | 'sources';
 
 export default function Home() {
   const {
@@ -114,7 +115,7 @@ export default function Home() {
 
       <SearchBox query={query} busy={busy} onQueryChange={setQuery} onSubmit={search} />
 
-      <div className="tabs" role="tablist" aria-label="Results or filters">
+      <div className="tabs" role="tablist" aria-label="Results, filters, structure or databases">
         <button
           type="button"
           role="tab"
@@ -146,6 +147,16 @@ export default function Home() {
         >
           Structure
         </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === 'sources'}
+          className={`tab${tab === 'sources' ? ' on' : ''}`}
+          onClick={() => setTab(tab === 'sources' ? 'results' : 'sources')}
+        >
+          Databases
+          <span className="tab-count">{SOURCE_COUNT}</span>
+        </button>
         {activeDef && (
           <span className="tab-active">
             {activeDef.label}
@@ -169,6 +180,11 @@ export default function Home() {
           file is treated exactly as one typed into the box, because that is
           all that leaves the browser. */}
       <StructureDrop open={tab === 'structure'} onSubmit={search} onClose={() => setTab('results')} />
+
+      {/* §11.10. The inventory, generated from the registry and the deep-link
+          list — reachable without running a query, because "what is behind
+          this page?" is a question about the tool, not about a subject. */}
+      <SourceCatalogue open={tab === 'sources'} onClose={() => setTab('results')} />
 
       {error && <div className="error-box">{error}</div>}
 

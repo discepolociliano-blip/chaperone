@@ -51,6 +51,7 @@ API host stopped resolving, both caught by this script.
 | Path | What lives there |
 |---|---|
 | `app/api/` | Route handlers. The only code that talks to upstream APIs. |
+| `components/SourceCatalogue.tsx` | The Databases tab (§11.10) — the inventory, generated from the registry and the deep-link list. |
 | `lib/connectors/` | One file per data source. Identifiers in, panel data out. |
 | `lib/registry.ts` | The single list of connectors. Adding a source touches this plus one new file. |
 | `components/` | Rendering only. No fetching. |

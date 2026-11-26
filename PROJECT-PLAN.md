@@ -3,7 +3,7 @@
 > **Status:** Gates 1–3 COMPLETE · **Gate 4 (execute) — M1–M8 done, plus two post-M8 additions you asked for (§11.8 the filter catalogue, §11.9 the structure door). M9 next: final verification and deploy.**
 > **§7 criteria: all 20 met.** 16 are machine-checked every run by `npm run verify:criteria`, and **10b** by `npm run verify:absence` (a scripted local source — see §11.7a). The other three are induced by hand because no script can stage them: **8** and **8b** (partial failure) and **14** (needs a production build). All three were induced on 2026-11-09; see the M8 findings.
 > **§11.7's correctness half is closed (§11.7a, 2026-11-10):** an absence is confirmed by a second request before it is reported, so a throttled 404 can no longer be printed as "this source has no record". The capacity half — outbound throttling, a shared cache — stays open for deploy.
-> **Interface live:** 10 components + 1 hook, in three tabs — results, the filter catalogue, and the structure door. Everything at once · four panel states · presets and filters narrow, never reorder · every suggestion names its rule.
+> **Interface live:** 11 components + 1 hook, in four tabs — results, the filter catalogue, the structure door, and the database inventory (§11.10, added 2026-11-26). Everything at once · four panel states · presets and filters narrow, never reorder · every suggestion names its rule.
 > **Two inputs on the page now, not one** — the search box and a file input, both allowlisted with a reason in criterion 15. §7.15 was re-argued rather than assumed when the second one landed; see §11.9.
 > **Rules layer live:** 3 presets · 20 deep links · 10 suggestion rules. `npm run probe` and `npm run verify:deeplinks` both green.
 > **Panels live:** 18, in the researcher's funnel (§11.2a, set 2026-11-09) — **condition:** Open Targets, ClinVar, HPO, Monarch · **target/pathway/biomarker:** UniProt, Reactome, STRING, IntAct, GTEx, HPA · **drug:** ChEMBL · **mechanism & safety:** PDB, AlphaFold, gnomAD · **study & population:** GWAS Catalog, dbSNP · **pathogen:** NCBI Nucleotide, BV-BRC
@@ -748,6 +748,45 @@ is skipped by line rather than tokenised, which is where that comes from.
 Sequence-based identification would mean BLAST, which is a slow asynchronous service and
 a new gate-1 source. The page says so and points at the search box instead.
 
+**11.10 — the database inventory. Added 2026-11-26, at your request:** *"list at the
+chaperone website by creating another section of all the databases that have been used".*
+
+A fourth tab, **Databases**, listing every source the app can reach. Until now the only
+way to answer "what is actually behind this page?" was to run a query and count panels —
+which shows the sources that had something to say about that one subject, not the
+inventory. The inventory was written down in §6 of this document, where no user of the
+site will ever see it.
+
+**It is generated from `lib/registry.ts` and `lib/deeplinks.ts`, never typed.** Same rule
+as the panel grid (§9.3): a catalogue that can drift from the code is worse than no
+catalogue, because it reads as a claim about the present. Every count on the page is
+computed for the same reason — a hardcoded "18 sources" outlives the connector it counted.
+The tab badge, the group totals and the distinct-source figure all fall out of the two
+lists, and a source that is both queried and linked counts once.
+
+**The split is the content, not the layout.** Two headings, because there are two
+genuinely different relationships and merging them would overstate what Chaperone does:
+
+| | What it means | Count today |
+|---|---|---|
+| **Queried through their APIs** | Chaperone calls it and renders the answer as a panel, with its four states and a fetch timestamp. Every value on a result page came from one of these. | 18 |
+| **Linked, never queried** | Chaperone builds a URL into it and nothing more. Never called, nothing from it ever shown here, and for the credentialed ones no credential ever handled (§3.1). | 22 |
+
+The linked group is subdivided by `access` — open, needs your own account, controlled —
+and each row states where the link lands (`record`, `prefilled-search`, `index`), so the
+distinction §6.4 draws is visible to the researcher rather than only to the code.
+
+**One thing to watch in the implementation.** A `DeepLink` has no homepage field: its
+`url()` is a function of identifiers, so there is no URL to show for a resource until a
+query has resolved. The origin shown is derived by building the URL with throwaway probe
+identifiers and keeping only scheme and host. **This is not a §6.5 breach** — the probe
+values are never rendered, never requested, and everything after the host is discarded —
+but it is the kind of shortcut that becomes one if somebody later prints the whole URL,
+so the component says so at the point it happens.
+
+**Not verified by you yet.** It typechecks and the production build is clean; the rendered
+page has not been looked at.
+
 ## 12. Approval
 
 Gate 4 does not begin until this is filled in.
@@ -895,6 +934,9 @@ Changes requested before execution:
 | 2026-11-26 | **The repo is PUBLIC, overriding the private default that was offered** | Your call. Published only after a scan of every tracked file for keys, emails and local paths found none, and `.env.example`'s one populated value is the already-public contact URL — public is effectively irreversible once forks and caches exist, so the scan came first |
 | 2026-11-26 | **The project folder moved out of `~/Desktop/APRAZAR` to `~/Desktop/chaperone`** | Your instruction: Chaperone is to be kept clear of unrelated work. The Vercel link survives because `.vercel/project.json` identifies the project by ID, not by path |
 | 2026-11-26 | **The README's "M1 of 7" status was stale by seven milestones and is now generated from this table** | It was written at M1 and never updated, so it advertised a scaffold for a deployed 18-source app — and a reader, me included, believed it over this document. §5.8's documentation duty covers the README too, not just the plan |
+| 2026-11-26 | **§11.10 the database inventory is a fourth tab, generated from the two lists** | Your request. Typing forty names into a component would have produced the same page today and a false one within a milestone — the registry already is the inventory, so the catalogue reads it rather than restating it (§9.3) |
+| 2026-11-26 | **Queried and linked sources are listed under separate headings, never merged** | "All the databases that have been used" has two honest answers — 18 called, 22 linked — and one list of 40 would claim the tool reads sources it only points at. §5.5 applies to claims about Chaperone itself, not only about biology |
+| 2026-11-26 | **A linked resource's row shows its origin, derived from a probe-built URL** | A `DeepLink` carries no homepage, only a builder needing identifiers. Scheme and host are facts about the resource; the probe identifiers are discarded and never rendered, so §6.5 is intact — but the component states this at the point it happens, because the same shortcut printing a full URL would be a fabricated record link |
 
 ### M2 findings — four fixes, three of them correctness
 
