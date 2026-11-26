@@ -1,0 +1,21 @@
+Copyright (c) 2026. All rights reserved.
+
+This software and its source code are proprietary and confidential.
+No licence to use, copy, modify, merge, publish, distribute, sublicense
+or sell copies of this software is granted.
+
+PROJECT-PLAN.md §10.1 records this as a commercial project, so this file
+is deliberately NOT a permissive open-source licence. It is the
+non-foreclosing default: it can be replaced with MIT or any other licence
+at any time, whereas code already distributed under MIT cannot be taken
+back. See §10.5.
+
+----
+
+This licence covers Chaperone's own code only.
+
+It does NOT cover the third-party data Chaperone retrieves. Each data
+source carries its own terms, and some are share-alike or
+non-commercial; PROJECT-PLAN.md §5.6 and §6 record the terms per source
+and which ones are display-only for that reason. Retrieving data through
+Chaperone does not relicense it.
